@@ -65,6 +65,9 @@ BOOT_CODE static void dist_init(void)
     int nirqs = 32 * ((gic_dist->ic_type & 0x1f) + 1);
     gic_dist->enable = 0;
 
+    /* Indicates whether the GIC implements the Security Extensions */
+    bool_t security_extn = !!(gic_dist->ic_type & BIT(10));
+
     for (i = 0; i < nirqs; i += 32) {
         /* disable */
         gic_dist->enable_clr[i >> 5] = IRQ_SET_ALL;
@@ -74,7 +77,8 @@ BOOT_CODE static void dist_init(void)
 
     /* reset interrupts priority */
     for (i = 32; i < nirqs; i += 4) {
-        if (config_set(CONFIG_ARM_HYPERVISOR_SUPPORT)) {
+        if (config_set(CONFIG_ARM_HYPERVISOR_SUPPORT) && security_extn) {
+            /* ARM recommends that, for a Group 1 interrupt, bit[7] is set to 1 */
             gic_dist->priority[i >> 2] = 0x80808080;
         } else {
             gic_dist->priority[i >> 2] = 0;
@@ -97,7 +101,7 @@ BOOT_CODE static void dist_init(void)
 
     /* group 0 for secure; group 1 for non-secure */
     for (i = 0; i < nirqs; i += 32) {
-        if (config_set(CONFIG_ARM_HYPERVISOR_SUPPORT) && !config_set(CONFIG_PLAT_QEMU_ARM_VIRT)) {
+        if (config_set(CONFIG_ARM_HYPERVISOR_SUPPORT) && security_extn) {
             gic_dist->security[i >> 5] = 0xffffffff;
         } else {
             gic_dist->security[i >> 5] = 0;
@@ -115,8 +119,11 @@ BOOT_CODE static void cpu_iface_init(void)
     gic_dist->enable_clr[0] = IRQ_SET_ALL;
     gic_dist->pending_clr[0] = IRQ_SET_ALL;
 
+    /* Indicates whether the GIC implements the Security Extensions */
+    bool_t security_extn = !!(gic_dist->ic_type & BIT(10));
+
     /* put everything in group 0; group 1 if in hyp mode */
-    if (config_set(CONFIG_ARM_HYPERVISOR_SUPPORT) && !config_set(CONFIG_PLAT_QEMU_ARM_VIRT)) {
+    if (config_set(CONFIG_ARM_HYPERVISOR_SUPPORT) && security_extn) {
         gic_dist->security[0] = 0xffffffff;
         gic_dist->priority[0] = 0x80808080;
     } else {
