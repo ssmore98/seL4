@@ -1,0 +1,36 @@
+/*
+ * Copyright 2020, Arm Ltd
+ *
+ * Copyright 2018, Data61
+ * Commonwealth Scientific and Industrial Research Organisation (CSIRO)
+ * ABN 41 687 119 230.
+ *
+ * This software may be distributed and modified according to the terms of
+ * the GNU General Public License version 2. Note that NO WARRANTY is provided.
+ * See "LICENSE_GPLv2.txt" for details.
+ *
+ * @TAG(DATA61_GPL)
+ */
+
+/ {
+	chosen {
+		seL4,elfloader-devices =
+		    "serial0";
+		seL4,kernel-devices =
+		    "serial0",
+		    &{/soc/gic400@40041000},
+		    &{/timer};
+	};
+
+	memory {
+		/* NOTE The Pi 4 can have {1,2,4}GB of RAM. During typical (e.g.
+		 * Raspbian) boot, the GPU bootloader sets this property. This
+		 * value was observed from within Raspbian on a 4GB Pi (from
+		 * /proc/dev/ice-tree/memory and /proc/iomem).
+		 */
+
+		reg = < 0x0        0x0 0x3b400000
+		        0x0 0x40000000 0xbc000000 >;
+
+	};
+};
