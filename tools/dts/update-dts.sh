@@ -56,6 +56,7 @@ zynq-zc706=zynq7000
 
 ARM64_DTBS="
 amlogic/meson-gxbb-odroidc2=odroidc2
+bcm2711-rpi-4-b=rpi4
 hisilicon/hi6220-hikey=hikey
 nvidia/tegra210-p2371-2180=tx1
 xilinx/avnet-ultra96-rev1=ultra96
