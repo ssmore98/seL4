@@ -31,9 +31,9 @@ if(KernelPlatformRpi4)
     set(KernelArmCortexA72 ON)
     set(KernelArchArmV8a ON)
     set(KernelArmPASizeBits44 ON)
-    config_set(KernelARMPlatform ARM_PLAT bcm2711)
+    config_set(KernelARMPlatform ARM_PLAT rpi4)
     set(KernelArmMachFeatureModifiers "+crc" CACHE INTERNAL "")
-    list(APPEND KernelDTSList "tools/dts/bcm2711.dts")
+    list(APPEND KernelDTSList "tools/dts/rpi4.dts")
     list(APPEND KernelDTSList "src/plat/bcm2711/overlay-rpi4.dts")
 
     declare_default_headers(
