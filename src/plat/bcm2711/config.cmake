@@ -22,11 +22,7 @@ if(KernelPlatformRpi4)
     elseif("${KernelSel4Arch}" STREQUAL aarch64)
         declare_seL4_arch(aarch64)
     else()
-        message(
-            STATUS "Selected platform bcm2711 supports multiple architectures but none were given"
-        )
-        message(STATUS "  Defaulting to aarch64")
-        declare_seL4_arch(aarch64)
+        fallback_declare_seL4_arch(aarch64)
     endif()
     set(KernelArmCortexA72 ON)
     set(KernelArchArmV8a ON)
